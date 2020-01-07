@@ -24,13 +24,29 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  // create an array of objects with key and value equal to file id
+  // pass the array to the callback function
+  var data = [];
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      throw (err);
+    } else {
+      files.forEach(file => {
+        var id = path.basename(file, '.txt');
+        data.push({ id: id, text: id });
+      });
+      callback(null, data);
+    }
   });
-  callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
+  // create an array of objects with key and text equal to file id
+  // iterate through the list of text files
+  // if no elements match throw and error
+  // else if the id matches the id of an element
+  // pass that object into the callback function
+
   var text = items[id];
   if (!text) {
     callback(new Error(`No item with id: ${id}`));
