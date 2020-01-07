@@ -15,23 +15,23 @@ const zeroPaddedNumber = (num) => {
   return sprintf('%05d', num);
 };
 
-const readCounter = (callback2) => {
+const readCounter = (callback) => {
   fs.readFile(exports.counterFile, (err, fileData) => {
     if (err) {
-      callback2(null, 0); // can't find file, so therefore pass back 0
+      callback(null, 0); // can't find file, so therefore pass back 0
     } else {
-      callback2(null, Number(fileData));
+      callback(null, Number(fileData));
     }
   });
 };
 
-const writeCounter = (count, callback3) => {
+const writeCounter = (count, callback) => {
   var counterString = zeroPaddedNumber(count);
   fs.writeFile(exports.counterFile, counterString, (err) => {
     if (err) {
-      throw ('error writing counter');
+      callback(err);
     } else {
-      callback3(null, counterString);
+      callback(null, counterString);
     }
   });
 };
@@ -43,12 +43,12 @@ const writeCounter = (count, callback3) => {
 // write new counter back to counter.txt
 // pass new counter to callback1 as padded string
 
-exports.getNextUniqueId = (callback1) => {
+exports.getNextUniqueId = (callback) => {
   readCounter ((err, currentCounter) => {
     // currentCounter === 0 ? currentCounter : currentCounter++;
     currentCounter += 1;
     writeCounter(currentCounter, (err, counterString) => {
-      callback1(null, counterString); //return zeroPaddedNumber(counter);
+      callback(null, counterString); //return zeroPaddedNumber(counter);
     });
   });
 };
