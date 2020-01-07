@@ -2,10 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
+const Promise = require('bluebird');
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
-var readFileAsync = Promise.promisify(fs.readFile);
+Promise.promisifyAll(fs);
 
 exports.create = (text, callback) => {
 
@@ -21,30 +22,31 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var promises = [];
-  fs.readdir(exports.dataDir, (err, files) => {
-    if (err) {
-      throw (err);
-    } else {
+  return fs.readdirAsync(exports.dataDir)
+    .then((files) => {
+      var promises = [];
       files.forEach(file => {
         promises.push(
           new Promise((resolve, reject) => {
             var id = path.basename(file, '.txt');
-            var text = readFileAsync(exports.dataDir + file);
-            if (err) {
-              reject(err);
-            } else {
-
-              resolve({ id, text });
-            }
+            fs.readFile(path.join(exports.dataDir, file), (err, text) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve({ id, text: text.toString() });
+              }
+            });
           })
         );
       });
-      Promise.all(promises).then((values) => {
-        callback(null, values);
-      });
-    }
-  });
+      return promises;
+    })
+    .then((promises) => {
+      Promise.all(promises)
+        .then((values) => {
+          callback(null, values);
+        });
+    });
 };
 
 exports.readOne = (id, callback) => {
