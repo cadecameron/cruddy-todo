@@ -41,18 +41,40 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
+  var filenameArray = [];
   // create an array of objects with key and text equal to file id
   // iterate through the list of text files
   // if no elements match throw and error
   // else if the id matches the id of an element
   // pass that object into the callback function
 
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      throw (err);
+    } else {
+      files.forEach(file => {
+        filenameArray.push(path.basename(file, '.txt'));
+      });
+    }
+    if (!filenameArray.includes(id)) {
+      callback(true, null);
+    } else {
+      fs.readFile(path.join(exports.dataDir, id + '.txt'), (err, text) => {
+        if (err) {
+          callback(err, null);
+        } else {
+          console.log(text.toString());
+          callback(null, { id: id, text: text.toString() });
+        }
+      });
+    }
+  });
+
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
 };
 
 exports.update = (id, text, callback) => {
