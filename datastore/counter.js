@@ -2,14 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
 
-// var counter = 0; // DONT USE ANYMORE
-
 // Private helper functions ////////////////////////////////////////////////////
 
 // Zero padded numbers can only be represented as strings.
-// If you don't know what a zero-padded number is, read the
-// Wikipedia entry on Leading Zeros and check out some of code links:
-// https://www.google.com/search?q=what+is+a+zero+padded+number%3F
 
 const zeroPaddedNumber = (num) => {
   return sprintf('%05d', num);
@@ -36,12 +31,12 @@ const writeCounter = (count, callback) => {
   });
 };
 
-// Public API - Fix this function //////////////////////////////////////////////
+// Public API //////////////////////////////////////////////
 
 // calling readCounter(callback) to get a current counter (either 0 or a number)
 // increase current counter by 1
 // write new counter back to counter.txt
-// pass new counter to callback1 as padded string
+// pass new counter to callback as padded string
 
 exports.getNextUniqueId = (callback) => {
   readCounter ((err, currentCounter) => {

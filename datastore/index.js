@@ -4,7 +4,7 @@ const _ = require('underscore');
 const counter = require('./counter');
 const Promise = require('bluebird');
 
-// Public API - Fix these CRUD functions ///////////////////////////////////////
+// Public API - CRUD functions ///////////////////////////////////////
 
 Promise.promisifyAll(fs);
 
